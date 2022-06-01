@@ -1,0 +1,118 @@
+//player object
+//params     y the location to start the player at, y = 0 is top of screen
+function Player(y)
+{
+  //dimensions
+	this.height = 70; //height of player (won't change)
+	this.width = 110; //player width (won't change)
+  
+  //location
+	this.worldX = 50;
+	this.worldY = y;
+	
+	this.minx_loc = 50;
+	this.maxx_loc = width - 50 - this.width;
+	
+	this.miny_loc = 50;
+	this.maxy_loc = height - 50 - this.height;
+	
+	this.x_loc = 50;
+	this.y_loc = 50;
+	
+	this.jumpingNDX = 0;
+	
+	this.gravity = -10; //gravity
+	this.isOnPlatform = 0;
+	
+	this.move = function(x,y)
+	{
+		this.worldX += x;
+		this.worldY += y;
+		
+		if(x < 0)//moving left
+		{
+			if(this.minx_loc < (this.x_loc - x))//can move left
+				this.x_loc += x;
+			else
+				backgroundXNDX = (backgroundXNDX - x) % backgroundWidth;
+		}
+		if(x > 0)//moving right
+		{
+			if(this.maxx_loc > (this.x_loc - x))//can move left
+				this.x_loc += x;
+			else
+				backgroundXNDX = (backgroundXNDX - x) % backgroundWidth;		
+		}
+				
+		if(y > 0)//moving down
+		{
+			if(this.maxy_loc > (this.y_loc + y))//can move left
+			{
+				ytemp = "-";
+				this.y_loc += y
+			}
+			else
+			{
+				ytemp = "down";
+				backgroundYNDX = (backgroundYNDX - y) % backgroundHeight;
+			}
+		}
+		if(y < 0)//moving up
+		{
+			if(this.miny_loc < (this.y_loc - y))//can move left
+			{
+				ytemp = "/";
+				this.y_loc += y;
+			}
+			else
+			{
+				ytemp = "up";
+				backgroundYNDX = (backgroundYNDX - y) % backgroundHeight;
+			}
+		}
+		
+	}
+	
+	this.jump = function()
+	{
+		if(this.jumpingNDX <= 0 && this.isOnPlatform == 1)
+			this.jumpingNDX = 20;
+	}
+	
+	//uses the player's speed to change their current position
+	this.updatePosition = function()
+	{
+		//make sure the player isn't outside of the min/max height before changing position
+		//if(  (this.y_loc > this.max_y_loc && this.y_speed > 0) || (this.y_loc <= this.min_y_loc && this.y_speed < 0))
+		//	this.y_loc -= this.y_speed/10; //remember y_loc increasing means going down!
+			
+		//always have the player falling a little
+		//if(this.y_speed > this.y_idle)
+		//	this.y_speed -= 15;
+		
+		if(this.jumpingNDX > 0)
+		{
+			this.move(0, -20);
+			this.jumpingNDX-=2;
+		}
+		this.move(0,-this.gravity*(1-this.isOnPlatform));
+	}
+	
+	//drawing function for the player
+	this.draw = function()
+	{
+		context.drawImage(this.getImage(), this.x_loc, this.y_loc);
+		drawRect(this.x_loc, this.y_loc, this.width, this.height, blueFill);
+	}
+	
+	//definiton of the player images
+	//jetpack off
+	this.power0 = new Image();
+	this.power0.src = "./images/power0.png";
+	
+	//determins the current image that should represent the player
+	this.getImage = function()
+	{
+		return this.power0;
+	}
+};
